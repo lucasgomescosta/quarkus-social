@@ -22,13 +22,11 @@ public class FollowerResource {
 
     private FollowerRepository repository;
     private UserRepository userRepository;
-    private FollowerRepository followerRepository;
 
     @Inject
-    public FollowerResource(FollowerRepository repository, UserRepository userRepository, FollowerRepository followerRepository) {
+    public FollowerResource(FollowerRepository repository, UserRepository userRepository) {
         this.repository = repository;
         this.userRepository = userRepository;
-        this.followerRepository = followerRepository;
     }
 
     @PUT
@@ -71,28 +69,6 @@ public class FollowerResource {
         var user = userRepository.findById(userId);
         if(user == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
-        if(followerId == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("You forgot the header followerId")
-                    .build();
-        }
-
-        User follower = userRepository.findById(followerId);
-
-        if(follower == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Inexistent followerId")
-                    .build();
-        }
-
-        boolean follows = followerRepository.follows(follower, user);
-
-        if(!follows) {
-            return Response.status(Response.Status.FORBIDDEN)
-                    .entity("You can't see these posts.")
-                    .build();
         }
 
         var list = repository.findByUser(userId);
